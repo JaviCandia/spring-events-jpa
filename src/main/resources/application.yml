@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: Eventos API
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eventos
+    username: user
+    password: password
+  jpa:
+    show-sql: true # Importante: Crea las tablas si no existen
+    hibernate:
+      ddl-auto: update # Opcional: Para que veas el SQL en la consola (muy útil para aprender)
