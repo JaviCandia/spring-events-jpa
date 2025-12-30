@@ -29,10 +29,34 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventResponse> create(@Valid @RequestBody EventCreateRequest request) {
-        Event eventToSave = eventMapper.toEvent(request);
-        Event eventSaved = eventService.save(eventToSave);
+        Event newEvent = eventMapper.toEvent(request);
+        Event savedEvent = eventService.save(newEvent);
+        EventResponse response = eventMapper.toEventResponse(savedEvent);
 
-        EventResponse response = eventMapper.toEventResponse(eventSaved);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EventResponse> getEventById(@PathVariable Long id) {
+        Event event = eventService.findById(id);
+        EventResponse eventResponse = eventMapper.toEventResponse(event);
+
+        return ResponseEntity.ok(eventResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @Valid @RequestBody EventCreateRequest request) {
+        Event existingEvent = eventService.findById(id);
+        eventMapper.updateEvent(request, existingEvent);
+        Event updatedEvent = eventService.save(existingEvent);
+
+        return ResponseEntity.ok(eventMapper.toEventResponse(updatedEvent));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        eventService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
