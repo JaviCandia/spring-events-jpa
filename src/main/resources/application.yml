@@ -6,6 +6,11 @@ spring:
     username: user
     password: password
   jpa:
-    show-sql: true # Importante: Crea las tablas si no existen
+    show-sql: true # Muestra las consultas SQL en la consola (logs)
     hibernate:
-      ddl-auto: update # Opcional: Para que veas el SQL en la consola (muy �til para aprender)
+      ddl-auto: update # Crea o actualiza las tablas automáticamente
+
+# OJO: Para HS512 necesitas una clave MUY larga (mínimo 64 caracteres)
+jwt:
+  secret: UnaClaveMuySecretaParaFirmarTusJWTTokensYQueNadieLosFalsifiqueEsImportante
+  expiration: 600000
