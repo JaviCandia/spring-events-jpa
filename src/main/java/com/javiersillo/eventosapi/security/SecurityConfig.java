@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity // [MethodSecurity pt. 1] Para habilitar el uso de @PreAuthorize
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
@@ -37,11 +39,14 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
+                        // [MethodSecurity pt. 2] Esto ya no es necesario por el method security
+                        //.requestMatchers(HttpMethod.GET, "/api/v1/events/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // filtro para validar JWT
                 .build();
+
+        // Nota: como es el patrón builder no se ejecuta secuencialmente, solamente estamos dandole configuraciones
     }
 
     @Bean

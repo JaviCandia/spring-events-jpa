@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +22,15 @@ public class EventController {
     private final EventMapper eventMapper;
 
     @GetMapping
-    public List<EventResponse> getAllEvents() {
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')") // le concatena ROLE_
+    public ResponseEntity<List<EventResponse>> getAllEvents() {
         List<Event> events = eventService.findAll();
-
-        return eventMapper.toEventResponses(events);
+        List<EventResponse> eventResponses = eventMapper.toEventResponses(events);
+        return ResponseEntity.ok(eventResponses);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<EventResponse> create(@Valid @RequestBody EventCreateRequest request) {
         Event newEvent = eventMapper.toEvent(request);
         Event savedEvent = eventService.save(newEvent);
@@ -37,6 +40,7 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<EventResponse> getEventById(@PathVariable Long id) {
         Event event = eventService.findById(id);
         EventResponse eventResponse = eventMapper.toEventResponse(event);
@@ -45,6 +49,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @Valid @RequestBody EventCreateRequest request) {
         Event existingEvent = eventService.findById(id);
         eventMapper.updateEvent(request, existingEvent);
@@ -54,6 +59,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteById(id);
 
