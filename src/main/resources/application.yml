@@ -2,9 +2,9 @@ spring:
   application:
     name: Eventos API
   datasource:
-    url: jdbc:postgresql://localhost:5432/eventos
-    username: user
-    password: password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/eventos}
+    username: ${SPRING_DATASOURCE_USERNAME:user}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
   jpa:
     show-sql: true # Muestra las consultas SQL en la consola (logs)
     hibernate:
@@ -12,5 +12,5 @@ spring:
 
 # OJO: Para HS512 necesitas una clave MUY larga (mínimo 64 caracteres)
 jwt:
-  secret: UnaClaveMuySecretaParaFirmarTusJWTTokensYQueNadieLosFalsifiqueEsImportante
+  secret: ${JWT_SECRET:UnaClaveMuySecretaParaFirmarTusJWTTokensYQueNadieLosFalsifiqueEsImportante}
   expiration: 600000
